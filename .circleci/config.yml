@@ -1,0 +1,32 @@
+version: 2.1
+orbs:
+  ruby-orbs: sue445/ruby-orbs@1.4.3
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.6.1
+    steps:
+      - checkout
+      - ruby-orbs/bundle-install:
+          cache_key_prefix: bundle-v1
+          bundle_jobs: 4
+          bundle_retry: 3
+          bundle_path: vendor/bundle
+          bundle_gemfile: Gemfile
+          bundle_clean: true
+          bundle_extra_args:
+          restore_bundled_with: false
+      - run:
+          name: Run RuboCop
+          command: |
+            mkdir -p /tmp/test_results/rubocop
+            bundle exec rubocop --require rubocop/formatter/junit_formatter \
+                                --format RuboCop::Formatter::JUnitFormatter \
+                                --out /tmp/test_results/rubocop/results.xml
+      - store_test_results:
+          path: /tmp/test_results
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
