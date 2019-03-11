@@ -1,0 +1,12 @@
+mackerel-agent:
+  conf:
+    roles:
+      - home:develop
+    plugin:
+      metrics:
+        linux:
+          command: /usr/bin/mackerel-plugin-linux
+  plugins:
+    - mackerel-agent-plugins
+    - mackerel-check-plugins
+    - mkr
